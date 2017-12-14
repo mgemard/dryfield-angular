@@ -10,69 +10,40 @@ import { GameService } from '../game.service';
   styleUrls: ['./play.component.css']
 })
 export class PlayComponent implements OnInit {
-  nbField = 3;
-  fields: IField[] = [];
-  name = 'mat';
-  waterPrice = 1;
-
-  score = 0;
-  money = 50;
-  water = 30;
-  waterField = 30;
-
-  timer: number;
-  timeInterval = 1000;
-  pause: boolean;
-
-  showBuyWater = false;
+  waterPrice: number;
+  showBuyWater: boolean;
 
   constructor(private gameService: GameService) {
-    // for (let i = 0; i < this.nbField; i++) {
-    //   this.fields.push(new IField(i, this.waterField));
-    // }
+    this.waterPrice = 1;
+    this.showBuyWater = false;
   }
 
   ngOnInit() {
   }
 
   startGame() {
-    console.dir(this.fields);
-    console.dir('timer:' + this.timer);
-    this.timer = window.setInterval(() => this.gameLoop(), 1000);
+    if (!this.gameService.isGameStarted()) {
+      this.gameService.startGame();
+    }
   }
 
-  gameLoop() {
-    // console.dir('timer:' + this.timer);
-    // if (!this.pause) {
-    //   this.fields.forEach(field => field.grow());
-    // }
+  addField() {
+    this.gameService.addField();
   }
 
   openBuyWater() {
     this.showBuyWater = !this.showBuyWater;
-    this.pause = this.showBuyWater ? true : false;
+    this.gameService.pause = this.showBuyWater ? true : false;
   }
 
-  buyWater(qtyWaterBought: number) {
-    if (this.money >= qtyWaterBought * this.waterPrice) {
-      this.water += qtyWaterBought;
+  buyWater(water: number) {
+    console.log(typeof water);
+    water = Number(water);
+    if (this.gameService.getMoney() >= water * this.waterPrice) {
+      this.gameService.setWater(this.gameService.getWater() + water);
+      this.gameService.setMoney(this.gameService.getMoney() - water * this.waterPrice);
     }
-  }
-
-  irrigate(fieldId: number) {
-    // const field = this.fields[fieldId];
-    // if (this.water > 0) {
-    //   field.irrigate();
-    //   this.water--;
-    // }
-
-  }
-
-  harvest(fieldId: number) {
-    // const field = this.fields[fieldId];
-    // if (field.progress === 1) {
-    //   field.harvest();
-    // }
-
+    this.showBuyWater = false;
+    this.gameService.pause = false;
   }
 }

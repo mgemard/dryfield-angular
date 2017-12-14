@@ -11,21 +11,38 @@ import { GameService } from '../game.service';
 })
 export class FieldComponent implements OnInit {
   @Input() field: IField;
-  @Input() water: IField;
-  @Output() irrigateEmitter = new EventEmitter();
-  @Output() harvestEmitter = new EventEmitter();
 
-  constructor(private gameService: GameService) { }
-
-  ngOnInit() {
+  constructor(private gameService: GameService) {
   }
 
-  irrigate() {
-    // this.irrigateEmitter.emit(this.field.id);
+  ngOnInit() {
+    this.gameService.getStream().subscribe((weather) => {
+      this.grow();
+    }, (error) => {
+      console.log(error);
+    });
+  }
+
+  grow() {
+    if (this.field.water === 0) { this.field.progress = 0; }
+    if (this.field.water > 0) {
+      this.field.water--;
+      this.field.progress += 0.05;
+    }
   }
 
   harvest() {
-    // this.harvestEmitter.emit(this.field.id);
+    if (this.field.progress !== 100) { return; }
+
+    this.field.progress = 0;
+    this.gameService.setScore(this.gameService.getScore() + 1);
+    this.gameService.setMoney(this.gameService.getMoney() + 1);
   }
 
+  irrigate() {
+    if (this.gameService.getWater() > 0) {
+      this.gameService.setWater(this.gameService.getWater() - 1);
+      this.field.water++;
+    }
+  }
 }

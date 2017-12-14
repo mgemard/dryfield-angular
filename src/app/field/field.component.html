@@ -1,4 +1,4 @@
-<button (click)=irrigate() [disabled]="water===0">Irrigate</button>
+<button (click)=irrigate() [disabled]="gameService.getWater()===0 || !gameService.isGameStarted()">Irrigate</button>
 <div>{{field.progress | percent}} %</div>
 <div>{{field.water}} L</div>
-<button (click)=harvest() [disabled]="field.progress!==1">Harvest</button>
+<button (click)=harvest() [disabled]="field.progress!==1 || !gameService.isGameStarted()">Harvest</button>

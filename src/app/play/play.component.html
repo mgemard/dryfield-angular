@@ -1,17 +1,18 @@
 <div>
-  <button (click)=startGame() [disabled]="timer!==undefined">Go</button>
+  <button (click)=startGame() [disabled]="gameService.isGameStarted()">Go</button>
+  <button (click)=addField()>Add field</button>
 </div>
 
-<span>Score: {{gameService.score}}</span>
-<span>Money: {{gameService.money}}</span>
-<span>Water: {{gameService.water}}</span>
+<span>Score: {{gameService.getScore()}}</span>
+<span>Money: {{gameService.getMoney()}}</span>
+<span>Water: {{gameService.getWater()}}</span>
 
 <div class="container">
-  <app-field *ngFor="let field of gameService.fields" [field]="field" (irrigateEmitter)="irrigate($event)" (harvestEmitter)="harvest($event)"></app-field>
+  <app-field *ngFor="let field of gameService.fields" [field]="field"></app-field>
 </div>
 
 <button (click)=openBuyWater()>Buy water</button>
 <span *ngIf="showBuyWater">
-  <input #qtyWaterBought value=1 type="number" >
-  <button (click)=buyWater(qtyWaterBought.value)>Buy</button>
+  <input #water value=1 type="number">
+  <button (click)=buyWater(water.value)>Buy</button>
 </span>
